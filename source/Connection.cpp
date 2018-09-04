@@ -3,6 +3,7 @@
 
 using namespace MudServer;
 
+// Write outbound to a connection.
 void Connection::WriteToSocket() {
 
 	if (m_writing) {

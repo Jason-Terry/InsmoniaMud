@@ -6,30 +6,25 @@
 
 namespace MudServer {
 
-	
-
 	class Server {
-
-
 	public:
 		
 
 		// CONSTRUCTOR
 		Server(int port) : m_signal_set(m_io_service, SIGINT, SIGTERM), m_acceptor(m_io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v6(), port)) {
 			// Server Constructor
-			m_signal_set.async_wait(
-				[this](boost::system::error_code err, int signal) {
-				std::cout << "Server received signal (" << signal << ")"
-					<< " requesting shutdown." << std::endl;
+			m_signal_set.async_wait( [this](boost::system::error_code err, int signal) {
+				if (!err) {
+					std::cout << "Server received signal (" << signal << ")" << " requesting shutdown." << std::endl;
+				} else {
+					std::cout << "Error (" << err << ")" << std::endl;
+				}
 				m_acceptor.cancel();
-
-			}
-			);
+			});
 		};
 
 		void Run() {
 			Accept();
-
 			std::cout << "Server is running..." << std::endl;
 			m_io_service.run();
 		}; // end Run()
@@ -43,10 +38,10 @@ namespace MudServer {
 				[this, &connection](boost::system::error_code err) {
 				if (!err) {
 					std::cout << "Connection made!" << std::endl;
+					std::cout << "Total Active Connections (" << m_connections.size() << ")" << std::endl;
 
 					// socket
 					connection.Start();
-
 					Accept();
 				};
 			}

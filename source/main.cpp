@@ -1,3 +1,7 @@
+// WINDOWS DEFINES
+
+// INCLUDE
+
 #include <iostream>
 #include "Server.hpp"
 
