@@ -1,3 +1,11 @@
 # Insomnia MudServer
 
-A Mud Server written in C++11, using Boost.Asio.
+A Mud Server written in C++
+Using C++11 standards.
+Using Boost Libraries
+    - Asio
+    - Guid
+
+### About
+
+This project aims to create a modern C++ mud code-base.

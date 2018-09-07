@@ -8,6 +8,12 @@
 #include <cstdarg>
 #include <iostream>
 
+
+/*
+	The Connect Class contains 
+	the input / output logic of a individual connection. 
+*/
+
 namespace MudServer {
 	class Connection {
 	public:
@@ -30,10 +36,6 @@ namespace MudServer {
 		}
 		void Read() {
 			ReadFromSocket();
-		}
-
-		void Handler(const boost::system::error_code& error, std::size_t bytes_transferred) {
-			std::cout << "Handler called\r\n";
 		}
 
 		// Write should output to the client, until it's done, then flush the buffer, and swap it with the inputBuffer
