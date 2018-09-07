@@ -26,10 +26,18 @@ namespace MudServer {
 		void Run() {
 			Accept();
 			std::cout << "Server is running..." << std::endl;
+			m_server_running = true;
 			m_io_service.run();
+			
 		}; // end Run()
 
 	private:
+		void pollConnectionInputs() {
+			for (std::list<Connection>::iterator it = m_connections.begin(); it != m_connections.end(); ++it) {
+				std::cout << "CONNECTION";
+			}
+		}
+
 		void Accept() {
 			m_connections.emplace_back(m_io_service);
 			auto &connection = m_connections.back();
@@ -48,6 +56,7 @@ namespace MudServer {
 			);
 		}; // end Accept()
 
+		bool m_server_running;
 		boost::asio::io_service m_io_service;
 		boost::asio::ip::tcp::acceptor m_acceptor;
 		boost::asio::signal_set m_signal_set;

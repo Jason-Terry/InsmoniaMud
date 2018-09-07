@@ -4,6 +4,12 @@
 using namespace MudServer;
 
 // Write outbound to a connection.
+void Connection::ReadFromSocket() {
+	boost::asio::async_read_until(m_socket, m_inputBuffer, '\r', [this](boost::system::error_code err, std::size_t) {
+		std::cout << "INPUT" << std::endl;
+	});
+}
+
 void Connection::WriteToSocket() {
 
 	if (m_writing) {
