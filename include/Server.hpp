@@ -4,6 +4,10 @@
 #include <boost/asio.hpp>
 #include "Connection.hpp"
 
+/*
+	The Server Object accepts, manages, and contains all active connections. 
+*/
+
 namespace MudServer {
 
 	class Server {
@@ -32,11 +36,6 @@ namespace MudServer {
 		}; // end Run()
 
 	private:
-		void pollConnectionInputs() {
-			for (std::list<Connection>::iterator it = m_connections.begin(); it != m_connections.end(); ++it) {
-				std::cout << "CONNECTION";
-			}
-		}
 
 		void Accept() {
 			m_connections.emplace_back(m_io_service);
@@ -49,7 +48,7 @@ namespace MudServer {
 					std::cout << "Total Active Connections (" << m_connections.size() << ")" << std::endl;
 
 					// socket
-					connection.Start();
+					connection.Start(); // START THE CONNECTION!
 					Accept();
 				};
 			}

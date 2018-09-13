@@ -7,25 +7,41 @@
 #include <boost/uuid/uuid_io.hpp>
 #include <cstdarg>
 #include <iostream>
+#include <queue>
 
 
 /*
 	The Connect Class contains 
 	the input / output logic of a individual connection. 
+
+	Prompt() - Displays the prompt, and caputres input into the inputBuffer
+	Output() - Outputs the result of the engine tick to the connection.
+
+
 */
 
 namespace MudServer {
-	class Connection {
+
+	// The CONNECTION_STATUS should act as a state management tool to keep the connection doing the correct logic processing
+	// given a certain state.
+	enum CONNECTION_STATUS {
+		NEW_CONNECTION = 0,		// request user name -> if valid user name -> request password
+		USER_VERIFIED,			// user verification okay -> do user_menu()
+		ACTIVE_PLAYER,			// user selected a valid character -> do game()
+		CHAR_GEN_MENU,			// user selected invalid character name -> do char_gen() 
+	};
+
+	class Connection : public std::enable_shared_from_this<Connection> {
 	public:
 		typedef boost::asio::ip::tcp::socket SocketType;
 		explicit Connection(boost::asio::io_service &io_service)
 			: m_socket(io_service),
 			m_outputStream1(&m_outputBuffer1),
 			m_outputStream2(&m_outputBuffer2),
-			m_outputBuffer(&m_outputBuffer1),
-			m_outputStream(&m_outputStream1),
-			m_bufferBeingWritten(&m_outputBuffer2),
-			m_StreamBeingWritten(&m_outputStream2),
+			m_outputBufferPtr(&m_outputBuffer1),
+			m_outputStreamPtr(&m_outputStream1),
+			m_bufferBeingWrittenPtr(&m_outputBuffer2),
+			m_StreamBeingWrittenPtr(&m_outputStream2),
 			m_writing(false), m_moreToWrite(false) {
 
 			// Wat
@@ -40,13 +56,13 @@ namespace MudServer {
 
 		// Write should output to the client, until it's done, then flush the buffer, and swap it with the inputBuffer
 		void Write(const std::string &message) {
-			*m_outputStream << message << "\r\n";
+			*m_outputStreamPtr << message << "\r\n";
 			WriteToSocket();
 		}
 
 		void Write(std::vector<std::string> args) {
 			for (auto i = 0; i < args.size(); ++i) {
-				*m_outputStream << args.at(i) << "\r\n";
+				*m_outputStreamPtr << args.at(i) << "\r\n";
 			}
 			WriteToSocket();
 		}
@@ -54,13 +70,25 @@ namespace MudServer {
 		void Start() {
 			boost::uuids::basic_random_generator<boost::mt19937> gen;
 			m_connectionId = gen();
-			
-			Write({ "Test ", "two ", "three ", "four " });
-			Read();
-			Write("Welcome User!");
+			Prompt();
+		}
+
+		std::string ParseInputs() {
+			std::stringstream ss;
+			// Some Input Parsing
+			// ss << m_inputStream1.getline();
+			// Some Input Parsing
+			return ss.str();
 		}
 
 	private:
+
+
+		void Prompt() {
+			Write({ "WELCOME USER! ", to_string(m_connectionId)});
+		};
+
+		
 
 		void ReadFromSocket();
 		void WriteToSocket();
@@ -70,10 +98,12 @@ namespace MudServer {
 		// OUTPUT DOUBLE BUFFER
 		boost::asio::streambuf m_outputBuffer1, m_outputBuffer2;
 		std::ostream m_outputStream1, m_outputStream2;
-		boost::asio::streambuf *m_outputBuffer, *m_bufferBeingWritten;
-		std::ostream *m_outputStream, *m_StreamBeingWritten;
+		
+		// POINTERS
+		boost::asio::streambuf *m_outputBufferPtr, *m_bufferBeingWrittenPtr;
+		std::ostream *m_outputStreamPtr, *m_StreamBeingWrittenPtr;
 
-		boost::asio::streambuf m_inputBuffer;
+		boost::asio::streambuf m_inputBuffer1;
 
 		boost::uuids::uuid m_connectionId;
 
