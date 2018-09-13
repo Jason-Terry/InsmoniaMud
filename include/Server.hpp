@@ -2,6 +2,7 @@
 #define _SERVER_HPP_
 
 #include <boost/asio.hpp>
+#include <boost/make_shared.hpp>
 #include "Connection.hpp"
 
 /*
@@ -12,6 +13,7 @@ namespace MudServer {
 
 	class Server {
 	public:
+		typedef boost::shared_ptr<Connection> sptr;
 		
 
 		// CONSTRUCTOR
@@ -38,17 +40,17 @@ namespace MudServer {
 	private:
 
 		void Accept() {
-			m_connections.emplace_back(m_io_service);
-			auto &connection = m_connections.back();
+			m_connections.push_back(boost::make_shared<Connection>(m_io_service));
+			auto connection = m_connections.back();
 
-			m_acceptor.async_accept(connection.Socket(),
+			m_acceptor.async_accept(connection->Socket(),
 				[this, &connection](boost::system::error_code err) {
 				if (!err) {
 					std::cout << "Connection made!" << std::endl;
 					std::cout << "Total Active Connections (" << m_connections.size() << ")" << std::endl;
 
 					// socket
-					connection.Start(); // START THE CONNECTION!
+					connection->Start(); // START THE CONNECTION!
 					Accept();
 				};
 			}
@@ -59,7 +61,7 @@ namespace MudServer {
 		boost::asio::io_service m_io_service;
 		boost::asio::ip::tcp::acceptor m_acceptor;
 		boost::asio::signal_set m_signal_set;
-		std::list<Connection> m_connections;
+		std::list<sptr> m_connections;
 
 	};	// end Server Class
 } // end Namespace MudServer

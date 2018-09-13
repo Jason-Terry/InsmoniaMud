@@ -2,6 +2,7 @@
 #define _CONNECTION_HPP_
 
 #include <boost/asio.hpp>
+#include <boost/enable_shared_from_this.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -31,7 +32,7 @@ namespace MudServer {
 		CHAR_GEN_MENU,			// user selected invalid character name -> do char_gen() 
 	};
 
-	class Connection : public std::enable_shared_from_this<Connection> {
+	class Connection : public boost::enable_shared_from_this<Connection> {
 	public:
 		typedef boost::asio::ip::tcp::socket SocketType;
 		explicit Connection(boost::asio::io_service &io_service)
@@ -43,6 +44,10 @@ namespace MudServer {
 			m_bufferBeingWrittenPtr(&m_outputBuffer2),
 			m_StreamBeingWrittenPtr(&m_outputStream2),
 			m_writing(false), m_moreToWrite(false) {
+			
+			boost::uuids::basic_random_generator<boost::mt19937> gen;
+			m_connectionId = gen();
+			std::cout << "Created connection waiting for session start\r\n";
 
 			// Wat
 		}
@@ -68,8 +73,8 @@ namespace MudServer {
 		}
 
 		void Start() {
-			boost::uuids::basic_random_generator<boost::mt19937> gen;
-			m_connectionId = gen();
+			
+			// std::cout << "new tcp_connection session assigned id: " << to_string(m_connectionId) << "\r\n";
 			Prompt();
 		}
 
@@ -85,7 +90,8 @@ namespace MudServer {
 
 
 		void Prompt() {
-			Write({ "WELCOME USER! ", to_string(m_connectionId)});
+			Write("WELCOME USER! ");
+			Read();
 		};
 
 		
