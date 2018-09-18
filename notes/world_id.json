@@ -1,0 +1,12 @@
+{
+    "world_name" : "string",
+    "world_guid" : "string",
+    "world_host" : "string",
+    "world_port" : 1234,
+    "regions": {
+        "region_guid_1" : "path/to/region1.json",
+        "region_guid_2" : "path/to/region2.json",
+        "region_guid_3" : "path/to/region3.json",
+        "region_guid_4" : "path/to/region4.json"
+    }
+  }

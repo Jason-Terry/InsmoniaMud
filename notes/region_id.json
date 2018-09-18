@@ -1,0 +1,11 @@
+{
+    "name" : "string",
+    "region_id" : "string",
+    "type" : 1234,
+    "room desc" : "string",
+    "cells" : {
+        "cell_id1" : "path/to/cell_id.json",
+        "cell_id2" : "path/to/cell_id.json",
+        "cell_id3" : "path/to/cell_id.json"
+    }
+}

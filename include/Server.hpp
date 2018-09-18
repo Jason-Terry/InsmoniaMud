@@ -15,7 +15,6 @@ namespace MudServer {
 	public:
 		typedef boost::shared_ptr<Connection> sptr;
 		
-
 		// CONSTRUCTOR
 		Server(int port) : m_signal_set(m_io_service, SIGINT, SIGTERM), m_acceptor(m_io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v6(), port)) {
 			// Server Constructor
@@ -27,14 +26,13 @@ namespace MudServer {
 				}
 				m_acceptor.cancel();
 			});
-		};
+		}; // end Server()
 
 		void Run() {
 			Accept();
 			std::cout << "Server is running..." << std::endl;
 			m_server_running = true;
 			m_io_service.run();
-			
 		}; // end Run()
 
 	private:
@@ -44,17 +42,14 @@ namespace MudServer {
 			auto connection = m_connections.back();
 
 			m_acceptor.async_accept(connection->Socket(),
-				[this, &connection](boost::system::error_code err) {
+				[this, connection](boost::system::error_code err) {
 				if (!err) {
 					std::cout << "Connection made!" << std::endl;
 					std::cout << "Total Active Connections (" << m_connections.size() << ")" << std::endl;
-
-					// socket
 					connection->Start(); // START THE CONNECTION!
 					Accept();
 				};
-			}
-			);
+			});
 		}; // end Accept()
 
 		bool m_server_running;

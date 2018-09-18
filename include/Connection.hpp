@@ -13,10 +13,20 @@
 
 /*
 	The Connect Class contains 
-	the input / output logic of a individual connection. 
+	the input / output logic of a individual connection.
+
+	Needs to know what User is logged in with this connection.
+
+	m_connection_id		- A unique identifier for this connection
+	m_connection_port	- The port
+	m_connection_ip		- The IP for this connection
+		
 
 	Prompt() - Displays the prompt, and caputres input into the inputBuffer
 	Output() - Outputs the result of the engine tick to the connection.
+
+	ParseInput() - Takes input from the socket, parses it looking for valid commands.
+
 
 
 */
@@ -24,7 +34,7 @@
 namespace MudServer {
 
 	// The CONNECTION_STATUS should act as a state management tool to keep the connection doing the correct logic processing
-	// given a certain state.
+	// given a certain state.676
 	enum CONNECTION_STATUS {
 		NEW_CONNECTION = 0,		// request user name -> if valid user name -> request password
 		USER_VERIFIED,			// user verification okay -> do user_menu()
@@ -35,6 +45,8 @@ namespace MudServer {
 	class Connection : public boost::enable_shared_from_this<Connection> {
 	public:
 		typedef boost::asio::ip::tcp::socket SocketType;
+
+		// Constructor
 		explicit Connection(boost::asio::io_service &io_service)
 			: m_socket(io_service),
 			m_outputStream1(&m_outputBuffer1),
@@ -48,13 +60,13 @@ namespace MudServer {
 			boost::uuids::basic_random_generator<boost::mt19937> gen;
 			m_connectionId = gen();
 			std::cout << "Created connection waiting for session start\r\n";
+		} 
 
-			// Wat
+		void Start() {
+			std::cout << "new tcp_connection session assigned id: " << to_string(m_connectionId) << "\r\n";
+			Prompt();
 		}
 
-		SocketType &Socket() {
-			return m_socket;
-		}
 		void Read() {
 			ReadFromSocket();
 		}
@@ -70,42 +82,37 @@ namespace MudServer {
 				*m_outputStreamPtr << args.at(i) << "\r\n";
 			}
 			WriteToSocket();
-		}
+		}	
 
-		void Start() {
-			
-			// std::cout << "new tcp_connection session assigned id: " << to_string(m_connectionId) << "\r\n";
-			Prompt();
-		}
-
-		std::string ParseInputs() {
-			std::stringstream ss;
-			// Some Input Parsing
-			// ss << m_inputStream1.getline();
-			// Some Input Parsing
-			return ss.str();
+		SocketType &Socket() {
+			return m_socket;
 		}
 
 	private:
 
+		std::string ParseInputs(std::size_t t) {
+			std::ostringstream ss;
+			
+			// Some Input Parsing
+			ss << &m_inputBuffer1;
+			// Some Input Parsing
+			m_inputBuffer1.consume(t);
+			return ss.str();
+		}
 
 		void Prompt() {
-			Write("WELCOME USER! ");
+			Write("WELCOME USER!");
 			Read();
-		};
-
-		
+		}
 
 		void ReadFromSocket();
 		void WriteToSocket();
 
 		SocketType m_socket;
 
-		// OUTPUT DOUBLE BUFFER
 		boost::asio::streambuf m_outputBuffer1, m_outputBuffer2;
 		std::ostream m_outputStream1, m_outputStream2;
 		
-		// POINTERS
 		boost::asio::streambuf *m_outputBufferPtr, *m_bufferBeingWrittenPtr;
 		std::ostream *m_outputStreamPtr, *m_StreamBeingWrittenPtr;
 
@@ -116,10 +123,9 @@ namespace MudServer {
 		boost::system::error_code m_error_code;
 		std::size_t m_data_size;
 
-
 		bool m_writing, m_moreToWrite;
 
 	};
 
 } // end Namespace MudServer
-#endif // !_CONNECTION_HPP_
+#endif // _CONNECTION_HPP_

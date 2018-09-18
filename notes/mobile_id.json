@@ -1,0 +1,28 @@
+{
+    "name": "string",
+    "owner": "string",
+    
+    "race": "string",
+    "class": "string",
+
+    "attributes" : {
+        "atr_name_1": {
+            "base" : 0,
+            "adjustments" : 0,
+            "formula": "string"
+        }, 
+        "atr_name_1": {
+            "base" : 0,
+            "adjustments" : 0,
+            "formula": "string"
+        }
+    },
+
+    "special_flags" : [
+        "drop_inv",
+        "is_invuln",
+        "is_god",
+        "is_faction_leader",
+        "is_group_leader"
+    ]
+}

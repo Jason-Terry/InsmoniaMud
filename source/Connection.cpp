@@ -9,6 +9,7 @@ using namespace MudServer;
 
 // Write outbound to a connection.
 void Connection::ReadFromSocket() {
+	
 	boost::asio::async_read_until(m_socket, m_inputBuffer1, '\r',
 		[me=shared_from_this() ](boost::system::error_code err, std::size_t t) {
 		// Bail on error.
@@ -16,7 +17,7 @@ void Connection::ReadFromSocket() {
 			std::cout << "async_read returned error!" << std::endl; 
 			return; 
 		} else {
-			// std::cout << "INPUT: " << this->ParseInputs();
+			std::cout << "INPUT: " << me->ParseInputs(t) << "\r\n";
 			me->Write("INPUT SENT!");
 			me->Read();
 		}

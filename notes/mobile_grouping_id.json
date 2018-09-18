@@ -1,0 +1,10 @@
+{
+    "group_id_1": {
+        "mobile_id_1": "path/to/group/mobile_id1.json",
+        "mobile_id_2": "path/to/group/mobile_id2.json"  
+    },
+    "group_id_2": {
+        "mobile_id_1": "path/to/group/mobile_id1.json",
+        "mobile_id_2": "path/to/group/mobile_id2.json"  
+    }
+}

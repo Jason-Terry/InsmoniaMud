@@ -1,0 +1,56 @@
+{
+    "name" : "string",
+    "cell_id" : "string",
+    "type" : "string",
+    "desc" : "string",
+    "attributes" : [
+        "string", 
+        "string" 
+    ],
+    "affects" : [
+        "string",
+        "string"
+    ],
+    "exits" : {
+        "nw" : { 
+            "type" : "string",
+            "target" : "cell_id"
+        },
+        "n" : { 
+            "type" : "string",
+            "target" : "cell_id"
+        },
+        "ne" : { 
+            "type" : "string",
+            "target" : "cell_id"
+        },
+        "e" : { 
+            "type" : "string",
+            "target" : "cell_id"
+        },
+        "se" : { 
+            "type" : "string",
+            "target" : "cell_id"
+        },
+        "s" : { 
+            "type" : "string",
+            "target" : "cell_id"
+        },
+        "sw" : { 
+            "type" : "string",
+            "target" : "cell_id"
+        },
+        "w" : { 
+            "type" : "string",
+            "target" : "cell_id"
+        },
+        "u" : { 
+            "type" : "string",
+            "target" : "cell_id"
+        },
+        "d" : { 
+            "type" : "string",
+            "target" : "cell_id"
+        }
+    }
+}
