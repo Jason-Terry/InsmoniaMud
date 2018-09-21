@@ -58,13 +58,22 @@ namespace MudServer {
 			m_writing(false), m_moreToWrite(false) {
 			
 			boost::uuids::basic_random_generator<boost::mt19937> gen;
+			m_status = NEW_CONNECTION;
 			m_connectionId = gen();
 			std::cout << "Created connection waiting for session start\r\n";
-		} 
+			
+		}
+
+		~Connection() {
+			std::cout << "Connection " << to_string(m_connectionId) << " invalid, destroying connection.\r\n";
+		}
 
 		void Start() {
-			std::cout << "new tcp_connection session assigned id: " << to_string(m_connectionId) << "\r\n";
-			Prompt();
+			std::cout << "New session assigned id: " << to_string(m_connectionId) << "\r\n";
+			m_inputBuffer1.consume(1000);
+			// Write Welcome Message
+			Write("WELCOME USER!");
+			Read();
 		}
 
 		void Read() {
@@ -91,38 +100,38 @@ namespace MudServer {
 	private:
 
 		std::string ParseInputs(std::size_t t) {
-			std::ostringstream ss;
-			
-			// Some Input Parsing
-			ss << &m_inputBuffer1;
-			// Some Input Parsing
+			m_inputStream1.clear();
+			m_inputStream1 << &m_inputBuffer1;
 			m_inputBuffer1.consume(t);
-			return ss.str();
-		}
-
-		void Prompt() {
-			Write("WELCOME USER!");
-			Read();
+			return m_inputStream1.str();
 		}
 
 		void ReadFromSocket();
 		void WriteToSocket();
-
+		
+		// Socket
 		SocketType m_socket;
 
+		// Output
 		boost::asio::streambuf m_outputBuffer1, m_outputBuffer2;
 		std::ostream m_outputStream1, m_outputStream2;
 		
 		boost::asio::streambuf *m_outputBufferPtr, *m_bufferBeingWrittenPtr;
 		std::ostream *m_outputStreamPtr, *m_StreamBeingWrittenPtr;
 
+		// Input
 		boost::asio::streambuf m_inputBuffer1;
+		std::ostringstream m_inputStream1;
 
+		// Connection Info
 		boost::uuids::uuid m_connectionId;
+		CONNECTION_STATUS m_status;
 
+		// Boost Reqs
 		boost::system::error_code m_error_code;
 		std::size_t m_data_size;
 
+		// Control Vars
 		bool m_writing, m_moreToWrite;
 
 	};
