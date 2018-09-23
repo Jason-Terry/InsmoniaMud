@@ -17,7 +17,7 @@ void Connection::ReadFromSocket() {
             std::cout << "async_read returned error!" << std::endl;
             return;
         } else {
-            std::cout << "INPUT: " << me->ParseInputs(t) << "\r\n";
+            std::cout << "INPUT: " << me->ParseInputs(t) << "\n\r";
             me->Write("INPUT SENT!");
             me->Read();
         }

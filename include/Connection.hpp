@@ -60,17 +60,16 @@ namespace MudServer {
             boost::uuids::basic_random_generator<boost::mt19937> gen;
             m_status = NEW_CONNECTION;
             m_connectionId = gen();
-            std::cout << "Created connection waiting for session start\r\n";
+            std::cout << "Created connection waiting for session start\n\r";
             
         }
 
         ~Connection() {
-            std::cout << "Connection " << to_string(m_connectionId) << " invalid, destroying connection.\r\n";
+            std::cout << "Connection " << to_string(m_connectionId) << " invalid, destroying connection.\n\r";
         }
 
         void Start() {
-            std::cout << "New session assigned id: " << to_string(m_connectionId) << "\r\n";
-            m_inputBuffer1.consume(1000);
+            std::cout << "New session assigned id: " << to_string(m_connectionId) << "\n\r";
             // Write Welcome Message
             Write("WELCOME USER!");
             Read();
@@ -82,13 +81,13 @@ namespace MudServer {
 
         // Write should output to the client, until it's done, then flush the buffer, and swap it with the inputBuffer
         void Write(const std::string &message) {
-            *m_outputStreamPtr << message << "\r\n";
+            *m_outputStreamPtr << message << "\n\r";
             WriteToSocket();
         }
 
         void Write(std::vector<std::string> args) {
             for (auto i = 0; i < args.size(); ++i) {
-                *m_outputStreamPtr << args.at(i) << "\r\n";
+                *m_outputStreamPtr << args.at(i) << "\n\r";
             }
             WriteToSocket();
         }	

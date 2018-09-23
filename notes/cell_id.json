@@ -1,16 +1,10 @@
 {
-    "name" : "string",
     "cell_id" : "string",
-    "type" : "string",
-    "desc" : "string",
-    "attributes" : [
-        "string", 
-        "string" 
-    ],
-    "affects" : [
-        "string",
-        "string"
-    ],
+    "name" : "string",
+    "template" : "string",
+    "descriptor" : "string",
+    "properties": [ "prop_id", "prop_id" ],
+    "affects": [ "aff_id", "aff_id" ],
     "exits" : {
         "nw" : { 
             "type" : "string",
