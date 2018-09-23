@@ -6,39 +6,32 @@ Using Boost Libraries
     - Asio
     - Guid
 
-### About
+# About
 
 This project aims to create a modern C++ mud code-base.
 
 
-### Build Instructions
+# Build Instructions
 
-To build on windows using MSVS 2017.
+## To build on windows using VS 2017.
 
 1. Download Boost (We are currently using v 1_67_0)
-    a. https://www.boost.org/users/history/version_1_67_0.html
+    
+    a. [Boost 1_67_0](https://www.boost.org/users/history/version_1_67_0.html)
+
     b. Further documentation on getting boost working on windows can be found [here.](https://www.boost.org/doc/libs/1_68_0/more/getting_started/windows.html)
 
-2. It would be wise to extract boost to C:\
+2. It would be wise to extract boost to `C:\`
 
-3. Clone this repo, then open the clone in VS Studio.
+3. Clone this repo, then open the cloned VS Project in VS Studio.
 
-4. Configure the projec if needed, following these steps.
-    - 4.1   Build From the Visual Studio IDE
-
-    From Visual Studio's File menu, select New > Project…
-
-    In the left-hand pane of the resulting New Project dialog, select Visual C++ > Win32.
-
-    In the right-hand pane, select Win32 Console Application (VS8.0) or Win32 Console Project (VS7.1).
-
-    In the name field, enter “example”
-
-    Right-click example in the Solution Explorer pane and select Properties from the resulting pop-up menu
+4. Configure the project if needed, following these steps.
+    
+    Right-click the project in the Solution Explorer pane and select Properties from the resulting pop-up menu
 
     In Configuration Properties > C/C++ > General > Additional Include Directories, enter the path to the Boost root directory, for example
 
-        C:\Program Files\boost\boost_1_67_0
+        C:\boost_1_67_0
 
     In Configuration Properties > C/C++ > Precompiled Headers, change Use Precompiled Header (/Yu) to Not Using Precompiled Headers.2
 
@@ -46,5 +39,4 @@ To build on windows using MSVS 2017.
 
     From the Build menu, select Build Solution.
 
-
-4. Compile the project, hope all went well.
+5. Compile the project, hope all went well.
