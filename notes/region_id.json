@@ -1,8 +1,10 @@
 {
     "name" : "string",
     "region_id" : "string",
-    "type" : 1234,
-    "room desc" : "string",
+    "template" : 1234,
+    "descriptor" : "string",
+    "properties": [ "prop_id", "prop_id" ],
+    "affects": [ "aff_id", "aff_id" ],
     "cells" : {
         "cell_id1" : "path/to/cell_id.json",
         "cell_id2" : "path/to/cell_id.json",
