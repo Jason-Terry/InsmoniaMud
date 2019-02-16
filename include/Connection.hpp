@@ -12,7 +12,9 @@
 
 
 /*
-    The Connect Class contains 
+    The Connect Class contains the lifetime management of a connection
+    - Is a parent of ConnectionInput && ConnectionOutput object that manages functionality of
+    - Input and Output respectively.
     the input / output logic of a individual connection.
 
     Needs to know what User is logged in with this connection.
@@ -57,55 +59,55 @@ namespace MudServer {
             m_StreamBeingWrittenPtr(&m_outputStream2),
             m_writing(false), m_moreToWrite(false) {
             
+            // Extract GUID gen logic
             boost::uuids::basic_random_generator<boost::mt19937> gen;
             m_status = NEW_CONNECTION;
             m_connectionId = gen();
-            std::cout << "Created connection waiting for session start\n\r";
+            std::cout << "Created connection waiting for session start\n";
             
         }
 
         ~Connection() {
-            std::cout << "Connection " << to_string(m_connectionId) << " invalid, destroying connection.\n\r";
+            std::cout << "Connection " << to_string(m_connectionId) << " invalid, destroying connection.\n";
         }
 
-        void Start() {
-            std::cout << "New session assigned id: " << to_string(m_connectionId) << "\n\r";
-            // Write Welcome Message
-            Write("WELCOME USER!");
-            Read();
-        }
-
-        void Read() {
-            ReadFromSocket();
-        }
+        // void Start() {
+        //    std::cout << "New session assigned id: " << to_string(m_connectionId) << "\n";
+        // Write Welcome Message
+        //   Write("WELCOME USER!");
+        // }
 
         // Write should output to the client, until it's done, then flush the buffer, and swap it with the inputBuffer
-        void Write(const std::string &message) {
+        template <class T>
+        void Write(const T &message) {
             *m_outputStreamPtr << message << "\n\r";
             WriteToSocket();
         }
 
-        void Write(std::vector<std::string> args) {
-            for (auto i = 0; i < args.size(); ++i) {
-                *m_outputStreamPtr << args.at(i) << "\n\r";
-            }
+        template <class T>
+        std::ostream &operator<<(const T &message) {
+            Write(message);
+            m_moreToWrite = true;
+            return *m_outputStreamPtr;
+        }
+
+        std::ostream &ostream() {
             WriteToSocket();
-        }	
+            m_moreToWrite = true;
+            return *m_outputStreamPtr;
+        }
+
+        // void Write(const std::string &message) {
+        //    *m_outputStreamPtr << message << "\n\r";
+        //    WriteToSocket();
+        // }
 
         SocketType &Socket() {
             return m_socket;
         }
 
     private:
-
-        std::string ParseInputs(std::size_t t) {
-            m_inputStream1.clear();
-            m_inputStream1 << &m_inputBuffer1;
-            m_inputBuffer1.consume(t);
-            return m_inputStream1.str();
-        }
-
-        void ReadFromSocket();
+        
         void WriteToSocket();
         
         // Socket
@@ -118,16 +120,14 @@ namespace MudServer {
         boost::asio::streambuf *m_outputBufferPtr, *m_bufferBeingWrittenPtr;
         std::ostream *m_outputStreamPtr, *m_StreamBeingWrittenPtr;
 
-        // Input
-        boost::asio::streambuf m_inputBuffer1;
-        std::ostringstream m_inputStream1;
-
         // Connection Info
         boost::uuids::uuid m_connectionId;
         CONNECTION_STATUS m_status;
+
         // Boost Reqs
         boost::system::error_code m_error_code;
         std::size_t m_data_size;
+
         // Control Vars
         bool m_writing, m_moreToWrite;
     };

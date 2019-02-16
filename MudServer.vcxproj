@@ -151,11 +151,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\Connection.cpp" />
+    <ClCompile Include="source\LineOreintedConnection.cpp" />
     <ClCompile Include="source\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Connection.hpp" />
     <ClInclude Include="include\json.hpp" />
+    <ClInclude Include="include\LineOreintedConnection.hpp" />
     <ClInclude Include="include\Server.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
