@@ -9,13 +9,10 @@ namespace MudServer {
     class LineOreintedConnection : public Connection {
 
     public:
-        LineOreintedConnection(boost::asio::io_service &io_service) :
-            Connection(io_service),
+        LineOreintedConnection(SocketType &&socket) :
+            Connection(std::move(socket)),
             m_inputStream(&m_inputBuffer) {
-
-        }
-
-        void Start() {
+            Write("Welcome User!");
             ReadLine();
         }
 

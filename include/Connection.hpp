@@ -49,8 +49,8 @@ namespace MudServer {
         typedef boost::asio::ip::tcp::socket SocketType;
 
         // Constructor
-        explicit Connection(boost::asio::io_service &io_service)
-            : m_socket(io_service),
+        explicit Connection(SocketType &&socket)
+            : m_socket(std::move(socket)),
             m_outputStream1(&m_outputBuffer1),
             m_outputStream2(&m_outputBuffer2),
             m_outputBufferPtr(&m_outputBuffer1),

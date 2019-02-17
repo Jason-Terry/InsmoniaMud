@@ -12,12 +12,18 @@
 
 namespace MudServer {
 
+
+
     class Server {
     public:
-        typedef boost::shared_ptr<LineOreintedConnection> sptr;
+        // typedef boost::shared_ptr<LineOreintedConnection> sptr;
+        typedef boost::asio::ip::tcp::socket SocketType;
         
         // CONSTRUCTOR
-        Server(int port) : m_signal_set(m_io_service, SIGINT, SIGTERM), m_acceptor(m_io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v6(), port)) {
+        Server(int port) : 
+            m_signal_set(m_io_service, SIGINT, SIGTERM), 
+            m_acceptor(m_io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v6(), port)),
+            m_nextSocket(m_io_service) {
             
             // Server Constructor
             m_signal_set.async_wait( [this](boost::system::error_code err, int signal) {
@@ -40,14 +46,13 @@ namespace MudServer {
     private:
 
         void Accept() {
-            m_connections.push_back(boost::make_shared<LineOreintedConnection>(m_io_service));
-            auto connection = m_connections.back();
-            m_acceptor.async_accept(connection->Socket(),
-                [this, connection](boost::system::error_code err) {
+            m_acceptor.async_accept(m_nextSocket,
+                [this](boost::system::error_code err) {
                 if (!err) {
-                    std::cout << "Connection made!\n";
+                    std::cout << "Accepting New Connection!\n";
                     std::cout << "Total Active Connections (" << m_connections.size() << ")\n";
-                    connection->Start(); // START THE CONNECTION!
+                    // connection->Start(); // START THE CONNECTION!
+                    m_connections.emplace_back(std::move(m_nextSocket));
                     Accept();
                 };
             });
@@ -57,7 +62,8 @@ namespace MudServer {
         boost::asio::io_service m_io_service;
         boost::asio::ip::tcp::acceptor m_acceptor;
         boost::asio::signal_set m_signal_set;
-        std::list<sptr> m_connections;
+        boost::asio::ip::tcp::socket m_nextSocket;
+        std::list<LineOreintedConnection> m_connections;
 
     };	// end Server Class
 } // end Namespace MudServer

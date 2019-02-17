@@ -13,8 +13,6 @@ void LineOreintedConnection::ReadLine() {
             std::getline(m_inputStream, line);
             // m_interface.HandleLine(line);
             std::cout << "Receivied Line: " << line << std::endl;
-
-
             ReadLine();
         }
     });
