@@ -1,33 +1,29 @@
 #include "Connection.hpp"
-#include <iostream>
 
-using namespace MudServer;
 
-/*
-
-*/
+using namespace Mud::Server;
 
 void Connection::WriteToSocket() {
-
     if (m_writing) {
         m_moreToWrite = true;
         return;
     }
 
-    std::swap(m_outputBufferPtr, m_bufferBeingWrittenPtr);
-    std::swap(m_outputStreamPtr, m_StreamBeingWrittenPtr);
-
     m_writing = true;
 
-    async_write(m_socket, *m_bufferBeingWrittenPtr,
-        [me = shared_from_this()](boost::system::error_code err, std::size_t t) {
-        me->m_writing = false;
-        // Write
+    std::swap(m_outputBuffer, m_bufferBeingWritten);
+    std::swap(m_outputStream, m_streamBeingWritten);
+
+    async_write(m_socket, *m_bufferBeingWritten,
+        [this](boost::system::error_code err, std::size_t) {
+        
+        m_writing = false;
+        
         if (err) {
-            std::cout << "an async_write returned error!\n";
-        } else if (me->m_moreToWrite) {
-            me->WriteToSocket();
-            me->m_moreToWrite = false;
+            std::cout << "async_write returned an error." << std::endl;
+        } else if (m_moreToWrite) {
+            WriteToSocket();
+            m_moreToWrite = false;
         }
     });
 }

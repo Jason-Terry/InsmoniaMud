@@ -1,70 +1,83 @@
-#ifndef _SERVER_HPP_
-#define _SERVER_HPP_
+#ifndef SERVER_HPP
+#define SERVER_HPP
 
-#include <boost/asio.hpp>
-#include <boost/make_shared.hpp>
+#include <list>
+#include <iostream>
+
+#include "boost/asio.hpp"
+
 #include "Connection.hpp"
-#include "LineOreintedConnection.hpp"
 
-/*
-    The Server Object accepts, manages, and contains all active connections. 
-*/
-
-namespace MudServer {
-
-
+namespace Mud {
+namespace Server {
 
     class Server {
+        // Constructor
     public:
-        // typedef boost::shared_ptr<LineOreintedConnection> sptr;
-        typedef boost::asio::ip::tcp::socket SocketType;
         
-        // CONSTRUCTOR
-        Server(int port) : 
-            m_signal_set(m_io_service, SIGINT, SIGTERM), 
-            m_acceptor(m_io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v6(), port)),
-            m_nextSocket(m_io_service) {
-            
-            // Server Constructor
-            m_signal_set.async_wait( [this](boost::system::error_code err, int signal) {
-                if (err) {
-                    std::cout << "Error (" << err << ")\n";
-                } else {
-                    std::cout << "Server received signal (" << signal << ")" << " requesting shutdown.\n";
-                }
+        Server(int port) 
+            : m_signal_set(m_io_service, SIGINT, SIGTERM),
+              m_acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
+                                        boost::asio::ip::tcp::v6(), port))
+        {
+            m_signal_set.async_wait(
+                [this](boost::system::error_code err, int sig) {
+                std::cout << "Server received signal(" << sig << ")"
+                    << " requesting shutdown." << std::endl;
                 m_acceptor.cancel();
-            });
-        }; // end Server()
+            }
+            );
+        
+        }
 
         void Run() {
             Accept();
-            std::cout << "Server is running..." << std::endl;
-            m_server_running = true;
+            std::cout << "Server running..." << std::endl;
             m_io_service.run();
-        }; // end Run()
+        }
+
+
 
     private:
 
+        // Accept a inbound connection.
         void Accept() {
-            m_acceptor.async_accept(m_nextSocket,
-                [this](boost::system::error_code err) {
-                if (!err) {
-                    std::cout << "Accepting New Connection!\n";
-                    std::cout << "Total Active Connections (" << m_connections.size() << ")\n";
-                    // connection->Start(); // START THE CONNECTION!
-                    m_connections.emplace_back(std::move(m_nextSocket));
-                    Accept();
-                };
-            });
-        }; // end Accept()
+            
+            // Why use emplace_back instead of push_back
+            m_connections.emplace_back(m_io_service);
+            auto &connection = m_connections.back();
 
-        bool m_server_running;
+            // async_accept
+            m_acceptor.async_accept(connection.Socket(),
+                [this, &connection](boost::system::error_code err) {
+                if (!err) {
+                    
+                    std::cout << "Accepting a new connection!" << std::endl;
+                    connection.Start();
+                    // connection;
+
+                    Accept();
+                } 
+            }
+            );
+        }
+
         boost::asio::io_service m_io_service;
         boost::asio::ip::tcp::acceptor m_acceptor;
         boost::asio::signal_set m_signal_set;
-        boost::asio::ip::tcp::socket m_nextSocket;
-        std::list<LineOreintedConnection> m_connections;
+        std::list<Connection> m_connections;
 
-    };	// end Server Class
-} // end Namespace MudServer
-#endif // _SERVER_HPP_
+
+    };
+
+} // End Server Namespace
+} // End Mud Namespace
+
+
+
+
+
+
+#endif // !SERVER_HPP
+
+

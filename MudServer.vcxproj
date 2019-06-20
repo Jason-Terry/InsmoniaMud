@@ -18,6 +18,14 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\Connection.cpp" />
+    <ClCompile Include="source\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Connection.hpp" />
+    <ClInclude Include="include\Server.hpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{86013457-94A5-45AE-967C-37D1177AD1B7}</ProjectGuid>
@@ -149,17 +157,6 @@
       <AdditionalLibraryDirectories>C:\boost_1_67_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="source\Connection.cpp" />
-    <ClCompile Include="source\LineOreintedConnection.cpp" />
-    <ClCompile Include="source\main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\Connection.hpp" />
-    <ClInclude Include="include\json.hpp" />
-    <ClInclude Include="include\LineOreintedConnection.hpp" />
-    <ClInclude Include="include\Server.hpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

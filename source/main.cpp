@@ -1,21 +1,19 @@
-// WINDOWS DEFINES
-
-// INCLUDE
-
 #include <iostream>
+
 #include "Server.hpp"
 
+using namespace Mud::Server;
 
-
-namespace MudServer {
+namespace {
     const int SERVER_PORT = 4141;
-    // const std::string NEW_LINE = "\r\n";
 }
 
-int main() {	
-    MudServer::Server server(MudServer::SERVER_PORT);
+int main() {
+
+    Server server(SERVER_PORT);
     server.Run();
 
-    std::cout << "Server shutdown, terminating application normally." << std::endl;
+    std::cout << "Server Shutdown Normally." << std::endl;
+
     return 0;
 }
