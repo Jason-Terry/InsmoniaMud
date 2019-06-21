@@ -20,10 +20,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Connection.cpp" />
+    <ClCompile Include="source\LineBasedConnection.cpp" />
     <ClCompile Include="source\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Connection.hpp" />
+    <ClInclude Include="include\LineBasedConnection.hpp" />
     <ClInclude Include="include\Server.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

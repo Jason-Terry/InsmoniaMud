@@ -11,7 +11,7 @@ namespace Mud {
         public:
             typedef boost::asio::ip::tcp::socket SocketType;
 
-             explicit Connection(boost::asio::io_service &io_service)
+            explicit Connection(boost::asio::io_service &io_service)
                 :   m_socket(io_service),
                     m_outputStream1(&m_outputBuffer1),
                     m_outputStream2(&m_outputBuffer2),
@@ -24,15 +24,29 @@ namespace Mud {
 
             }
 
-             void Write(const std::string &msg) {
-                 *m_outputStream << msg;
-                 WriteToSocket();
-             }
-
-            void Start() {
-                Write("Connection Started!");
-            
+            template <class T>
+            void Write(const T &msg) {
+                *m_outputStream << msg;
+                WriteToSocket();
             }
+
+            template <class T>
+            std::ostream &operator<<(const T &msg) {
+                Write(msg);
+                m_moreToWrite = true;
+                return *m_outputStream;
+            }
+
+            std::ostream &ostream() {
+                WriteToSocket();
+                m_moreToWrite = true;
+                return *m_outputStream;
+            }
+
+           //  void Start() {
+           //     Write("Connection Started.\n\rWelcome User!\n\r");
+           // 
+           // }
 
             SocketType &Socket() { return m_socket;  }
 

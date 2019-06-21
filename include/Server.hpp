@@ -7,6 +7,7 @@
 #include "boost/asio.hpp"
 
 #include "Connection.hpp"
+#include "LineBasedConnection.hpp"
 
 namespace Mud {
 namespace Server {
@@ -65,7 +66,7 @@ namespace Server {
         boost::asio::io_service m_io_service;
         boost::asio::ip::tcp::acceptor m_acceptor;
         boost::asio::signal_set m_signal_set;
-        std::list<Connection> m_connections;
+        std::list<LineBasedConnection> m_connections;
 
 
     };
