@@ -15,7 +15,10 @@ void LineBasedConnection::ReadLine() {
             // m_interface.HandleLine(line);
             std::cout << "Recived Line: " << line << std::endl;
             ReadLine();
+            return;
         }
+
+        DoneReading();
     
     });
 

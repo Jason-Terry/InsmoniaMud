@@ -16,10 +16,11 @@ namespace Server {
         // Constructor
     public:
         
-        Server(int port) 
+        Server(int port)
             : m_signal_set(m_io_service, SIGINT, SIGTERM),
-              m_acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
-                                        boost::asio::ip::tcp::v6(), port))
+            m_acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
+                boost::asio::ip::tcp::v6(), port)),
+            m_nextSocket(m_io_service)
         {
             m_signal_set.async_wait(
                 [this](boost::system::error_code err, int sig) {
@@ -37,35 +38,43 @@ namespace Server {
             m_io_service.run();
         }
 
+        void DeleteConnection(std::list<LineBasedConnection>::iterator connection) {
+            m_connections.erase(connection);
+        }
+
 
 
     private:
-
         // Accept a inbound connection.
         void Accept() {
-            
             // Why use emplace_back instead of push_back
-            m_connections.emplace_back(m_io_service);
-            auto &connection = m_connections.back();
-
             // async_accept
-            m_acceptor.async_accept(connection.Socket(),
-                [this, &connection](boost::system::error_code err) {
+            m_acceptor.async_accept(m_nextSocket,
+            [this](boost::system::error_code err) {
                 if (!err) {
-                    
-                    std::cout << "Accepting a new connection!" << std::endl;
-                    connection.Start();
-                    // connection;
+                    // connection.Start();
+                    m_connections.emplace_front(std::move(m_nextSocket));
+                    auto connection = m_connections.begin();
+                    connection->SetCloseHandler(
+                        [this, connection]() {
+                        m_connections.erase(connection);
+                        std::cout << "Deleting a old connection!\n\rTotal Size is: " << m_connections.size() << std::endl;
+
+                    });
+
+                    std::cout << "Accepting a new connection!\n\rTotal Size is: " << m_connections.size() << std::endl;
 
                     Accept();
                 } 
-            }
-            );
+            });
         }
 
         boost::asio::io_service m_io_service;
-        boost::asio::ip::tcp::acceptor m_acceptor;
         boost::asio::signal_set m_signal_set;
+
+        boost::asio::ip::tcp::acceptor m_acceptor;
+        boost::asio::ip::tcp::socket m_nextSocket;
+        
         std::list<LineBasedConnection> m_connections;
 
 

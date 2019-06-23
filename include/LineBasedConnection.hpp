@@ -7,13 +7,10 @@ namespace Mud {
     namespace Server{
         class LineBasedConnection : public Connection {
         public:
-            LineBasedConnection(boost::asio::io_service &io_service) :
-                Connection(io_service),
+            LineBasedConnection(SocketType &&socket) :
+                Connection(std::move(socket)),
                 m_inputStream(&m_inputBuffer) {
-
-            }
-
-            void Start() {
+                Write("Welcome User!\n\r");
                 ReadLine();
             }
 

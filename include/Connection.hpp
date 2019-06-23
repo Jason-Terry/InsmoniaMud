@@ -11,8 +11,8 @@ namespace Mud {
         public:
             typedef boost::asio::ip::tcp::socket SocketType;
 
-            explicit Connection(boost::asio::io_service &io_service)
-                :   m_socket(io_service),
+            explicit Connection(SocketType &&socket)
+                :   m_socket(std::move(socket)),
                     m_outputStream1(&m_outputBuffer1),
                     m_outputStream2(&m_outputBuffer2),
                     m_outputStream(&m_outputStream1),
@@ -20,7 +20,8 @@ namespace Mud {
                     m_streamBeingWritten(&m_outputStream2),
                     m_bufferBeingWritten(&m_outputBuffer2),
                     m_writing(false),
-                    m_moreToWrite(false) {
+                    m_moreToWrite(false),
+                    m_reading(true) {
 
             }
 
@@ -50,12 +51,26 @@ namespace Mud {
 
             SocketType &Socket() { return m_socket;  }
 
+            template <class Handler>
+            void SetCloseHandler(Handler &&handler) {
+                m_closeHandler = std::forward<Handler>(handler);
+            }
+
+        protected:
+            void DoneReading() {
+                m_reading = false;
+                WriteToSocket();
+            }
         private:
 
             void WriteToSocket();
 
             bool m_writing, m_moreToWrite;
             SocketType m_socket;
+            bool m_reading;
+
+            // -- Handlers
+            std::function<void()> m_closeHandler;
 
             // Primary Output Stream Buffers
             std::ostream m_outputStream1, m_outputStream2;

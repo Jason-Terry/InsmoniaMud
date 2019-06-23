@@ -24,6 +24,12 @@ void Connection::WriteToSocket() {
         } else if (m_moreToWrite) {
             WriteToSocket();
             m_moreToWrite = false;
+            return;
+        }
+
+        if (!m_reading) {
+            m_closeHandler();
         }
     });
+
 }
