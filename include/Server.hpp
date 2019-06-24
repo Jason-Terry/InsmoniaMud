@@ -29,10 +29,6 @@ namespace Server {
             m_io_service.run();
         }
 
-        void DeleteConnection(std::list<LineBasedConnection>::iterator connection) {
-            m_connections.erase(connection);
-        }
-
     private:
         void Accept() {
             m_acceptor.async_accept(m_nextSocket,
@@ -43,21 +39,22 @@ namespace Server {
                     connection->SetCloseHandler(
                     [this, connection]() {
                         m_connections.erase(connection);
-                        std::cout << "Deleting a old connection!\n\rTotal Size is: " << m_connections.size() << std::endl;
+                        std::cout << "Deleting connection! Total Size is: " << m_connections.size() << "." << std::endl;
                     });
-                    std::cout << "Accepting a new connection!\n\rTotal Size is: " << m_connections.size() << std::endl;
+                    std::cout << "Accepting a new connection! Total Size is: " << m_connections.size() << "." << std::endl;
                     Accept();
                 }
             });
         }
 
+        std::list<LineBasedConnection> m_connections;
+        
         boost::asio::io_service m_io_service;
         boost::asio::signal_set m_signal_set;
 
         boost::asio::ip::tcp::acceptor m_acceptor;
         boost::asio::ip::tcp::socket m_nextSocket;
         
-        std::list<LineBasedConnection> m_connections;
     };
 
 } // End Server Namespace

@@ -5,7 +5,7 @@ using namespace Mud::Server;
 void LineBasedConnection::ReadLine() {
 
 
-    async_read_until(Socket(), m_inputBuffer, '\n',
+    async_read_until(m_socket, m_inputBuffer, '\n',
         [this](boost::system::error_code err, std::size_t) {
         if (err) {
 

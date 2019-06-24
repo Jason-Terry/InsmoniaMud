@@ -44,13 +44,6 @@ namespace Mud {
                 return *m_outputStream;
             }
 
-           //  void Start() {
-           //     Write("Connection Started.\n\rWelcome User!\n\r");
-           // 
-           // }
-
-            SocketType &Socket() { return m_socket;  }
-
             template <class Handler>
             void SetCloseHandler(Handler &&handler) {
                 m_closeHandler = std::forward<Handler>(handler);
@@ -61,13 +54,14 @@ namespace Mud {
                 m_reading = false;
                 WriteToSocket();
             }
+
+            SocketType m_socket;
+
         private:
 
             void WriteToSocket();
 
-            bool m_writing, m_moreToWrite;
-            SocketType m_socket;
-            bool m_reading;
+            bool m_reading, m_writing, m_moreToWrite;
 
             // -- Handlers
             std::function<void()> m_closeHandler;
