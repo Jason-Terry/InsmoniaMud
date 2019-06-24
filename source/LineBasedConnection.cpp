@@ -19,7 +19,6 @@ void LineBasedConnection::ReadLine() {
         }
 
         DoneReading();
-    
     });
 
 }
