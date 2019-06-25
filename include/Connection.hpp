@@ -44,9 +44,27 @@ namespace Mud {
                 return *m_outputStream;
             }
 
-            template <class Handler>
-            void SetCloseHandler(Handler &&handler) {
-                m_closeHandler = std::forward<Handler>(handler);
+            //template <class Handler>
+            //void SetCloseHandler(Handler &&handler) {
+            //    m_closeHandler = std::forward<Handler>(handler);
+            //}
+
+            void Close() {
+                // ???
+                SetInactive();
+            }
+
+            bool Active() {
+                return m_active;
+            }
+            
+            // Either IS active, or is NOT active.
+            void SetActive() {
+                m_active = true;
+            }
+
+            void SetInactive() {
+                m_active = false;
             }
 
         protected:
@@ -61,7 +79,7 @@ namespace Mud {
 
             void WriteToSocket();
 
-            bool m_reading, m_writing, m_moreToWrite;
+            bool m_reading, m_writing, m_moreToWrite, m_active;
 
             // -- Handlers
             std::function<void()> m_closeHandler;

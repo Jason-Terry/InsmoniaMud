@@ -24,7 +24,7 @@ namespace Server {
         }
 
         void Run() {
-            Accept();
+            Accept(); // Call ACCEPT Kicking off the first IO Call
             std::cout << "Server running..." << std::endl;
             m_io_service.run();
         }
@@ -36,11 +36,28 @@ namespace Server {
                 if (!err) {
                     m_connections.emplace_front(std::move(m_nextSocket));
                     auto connection = m_connections.begin();
-                    connection->SetCloseHandler(
-                    [this, connection]() {
-                        m_connections.erase(connection);
-                        std::cout << "Deleting connection! Total Size is: " << m_connections.size() << "." << std::endl;
-                    });
+                    
+                    // Why not instead flag connections for removal internally via a time from last call?
+                    // Server can force the flag to any state, triggering removal
+                    // Then we don't need a handler, we just prune all connections checking for the flag.
+                    
+                    // CLEAN UP INACTIVE CONNECTIONS
+                    int connections_cleaned = 0;
+                    for (auto &connections : m_connections) {
+                        if (!connection->Active()) {
+                            m_connections.erase(connection);
+                            connections_cleaned++;
+                        }
+                    }
+
+                    if (connections_cleaned > 0) {
+                        std::cout << "Total of " << connections_cleaned << " connections cleaned! Total Size is: " << m_connections.size() << "." << std::endl;
+                    }
+
+                    //connection->SetCloseHandler(
+                    //[this, connection]() {
+                    //    m_connections.erase(connection);
+                    //});
                     std::cout << "Accepting a new connection! Total Size is: " << m_connections.size() << "." << std::endl;
                     Accept();
                 }

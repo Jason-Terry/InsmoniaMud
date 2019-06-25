@@ -28,7 +28,7 @@ void Connection::WriteToSocket() {
         }
 
         if (!m_reading) {
-            m_closeHandler();
+            Close();
         }
     });
 
